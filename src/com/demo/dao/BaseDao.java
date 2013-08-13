@@ -16,6 +16,7 @@ public interface BaseDao<T,ID extends Serializable> {
 	 * @return
 	 */
 	public int[] batchAdd(String sql, List<List<Object>> values);
+	
 	/**
 	 * 基础接口之一</br>
 	 * 批量删除记录接口
