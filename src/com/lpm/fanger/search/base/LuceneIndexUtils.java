@@ -1,5 +1,9 @@
 package com.lpm.fanger.search.base;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,6 +30,8 @@ import org.apache.lucene.store.FSDirectory;
 
 import org.wltea.analyzer.lucene.IKAnalyzer;
 import org.wltea.analyzer.lucene.IKSimilarity;
+
+import com.lpm.fanger.commons.util.Reflections;
 
 /**
  * @Intro descrption here
@@ -119,29 +125,37 @@ public class LuceneIndexUtils {
 		}
 	}
 	
-	public static List<? extends SearchEnabled> find(Class<? extends SearchEnabled> beanClass,
-			Query query, int max_count) throws IOException {
+	public static List<? extends SearchEnabled> find(
+			Class<? extends SearchEnabled> beanClass,
+			Query query,int max_count,boolean isTest) throws IOException {
+		
 		IndexSearcher searcher = _GetSearcher(beanClass);
+		List results = new ArrayList();
 		try {
 			TopDocs hits = searcher.search(query, null, max_count);
+			System.out.println("total results : "+hits.totalHits);
 			if (hits == null)
 				return null;
-			List<? extends SearchEnabled> results = new ArrayList<SearchEnabled>();
 			int numResults = Math.min(hits.totalHits, max_count);
 			for (int i = 0; i < numResults; i++) {
 				ScoreDoc s_doc = (ScoreDoc) hits.scoreDocs[i];
 				Document doc = searcher.doc(s_doc.doc);
-				long id = NumberUtils.toLong(doc.get(_KEYWORD_FIELD_NAME), 0);
-				if (id > 0 && !results.contains(id))
-					results.add(id);
+				Object obj = _DocumentToObject(beanClass,doc);
+				results.add(obj);
 			}
+			
 			return results;
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			searcher.close();
 		}
+		
+		return results;
 	}
 
 	/**
@@ -194,6 +208,7 @@ public class LuceneIndexUtils {
 	 * @return
 	 * @throws IOException
 	 */
+	@SuppressWarnings("deprecation")
 	protected static IndexWriter _GetWriter(Class<?> beanClass)
 			throws IOException {
 		Directory indexDir = FSDirectory.open(new File(_g_lucene_path
@@ -275,45 +290,18 @@ public class LuceneIndexUtils {
 	@SuppressWarnings("unused")
 	private static Object _DocumentToObject(Class<? extends SearchEnabled> clazz, Document doc)
 			throws Exception {
-		Object ob = clazz.newInstance();
-		clazz.getDeclaredFields();
-		
-		// Set storage field
-		String[] storeFields = doc.GetStoreFields();
-		if (storeFields != null)
-			for (String s_field : storeFields) {
-				String propertyValue = _GetField(doc, s_field);
-				if (propertyValue != null)
-					lucene_doc.add(_Keyword(s_field, propertyValue));
-			}
-		// Set extends values
-		if (doc.GetExtendValues() != null) {
-			for (String key : doc.GetExtendValues().keySet()) {
-				String value = doc.GetExtendValues().get(key);
-				lucene_doc.add(_Keyword(key, value));
-			}
+		Object obj = clazz.newInstance();
+		java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+		for(java.lang.reflect.Field f : fields){
+			String fieldName = f.getName();
+			String fieldValue = doc.get(fieldName);
+			if(fieldName == null || fieldName.equals("") || fieldValue == null || fieldValue.equals(""))
+				continue;
+			System.out.println(fieldName+"-----"+fieldValue);
+			//设置值
+			Reflections.invokeSetter(obj, fieldName, fieldValue);
 		}
-		// Set indexed field
-		String[] indexFields = doc.GetIndexFields();
-		for (String idx_field : indexFields) {
-			String propertyValue = _GetField(doc, idx_field);
-			if (StringUtils.isNotBlank(propertyValue))
-				lucene_doc.add(_Index(idx_field, propertyValue));
-		}
-
-		// Set extends values
-		if (doc.GetExtendIndexValues() != null) {
-			for (String key : doc.GetExtendIndexValues().keySet()) {
-				String value = doc.GetExtendIndexValues().get(key);
-				try {
-					lucene_doc.add(_Index(key, value));
-				} catch (Exception e) {
-					e.printStackTrace();
-					continue;
-				}
-			}
-		}
-		return ob;
+		return obj;
 	}
 
 	/**

@@ -14,7 +14,7 @@ public class AticleRowMapper implements RowMapper<Aticle>{
 	@Override
 	public Aticle mapRow(ResultSet rs, int value) throws SQLException {
 		Aticle al = new Aticle();
-		al.setId(rs.getLong("id"));
+		al.setId(Long.parseLong(rs.getString("id")));
 		al.setContent(rs.getString("content"));
 		al.setTag(rs.getString("tag"));
 		al.setTitle(rs.getString("title"));

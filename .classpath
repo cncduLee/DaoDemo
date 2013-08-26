@@ -15,11 +15,11 @@
 	<classpathentry kind="lib" path="lib/org.springframework.beans-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.context-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.context.support-3.1.1.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/org.springframework.core-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.1.1.RELEASE.jar" sourcepath="C:/Users/Administrator/.m2/repository/org/springframework/spring-core/3.1.1.RELEASE/spring-core-3.1.1.RELEASE-sources.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.expression-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.jdbc-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.1.1.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-core-3.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-3.6.2.jar" sourcepath="C:/Users/Administrator/.m2/repository/org/apache/lucene/lucene-core/3.6.2/lucene-core-3.6.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

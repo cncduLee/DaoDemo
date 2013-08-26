@@ -65,7 +65,7 @@ public class IKAnalyzerTest {
     
     
 	public static void main(String[] args) {
-		String text = "选择可以体现您的情绪或个性的主题模板！还可以按您自己的想法设置首页排版方式。";
+		String text = "<a>i am Lee cnalk <href=''> </></a> 选择可以体现您的情绪或个性的主题模板！还可以按您自己的想法设置首页排版方式。";
 		long ct = System.currentTimeMillis();
 		
 		for(String word : IKAnalyzerTest.splitKeywords(text)){

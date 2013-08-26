@@ -25,7 +25,7 @@ public class AticleDao extends BaseDaoMysqlImpl<Aticle, Long>{
 		List<Object> values = new ArrayList<Object>();
 		values.add(begain);
 		values.add(count);
-		String sql = "select * from t_article limit ?,?";
+		String sql = "select * from "+getTableName()+" limit ?,?";
 		List<Aticle> list = search(sql, values,new AticleRowMapper());
 		return list;
 	}

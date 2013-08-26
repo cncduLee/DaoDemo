@@ -48,7 +48,7 @@ public class Main {
 //			}
 //			aticleDao.batchSave(list);
 //		}
-		butch(aticleDao);
+//		butch(aticleDao);
 	}
 	
 	public static void butch(AticleDao aticleDao){
